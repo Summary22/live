@@ -702,6 +702,90 @@ html[data-theme="light"] .hero h1 {
 }
 .wall-hint svg { width: 13px; height: 13px; flex-shrink: 0; }
 
+/* ═══════ 鹈鹕骑自行车 · 原创 SVG 动画（视频墙彩蛋） ═══════ */
+.video-card.is-anim {
+  cursor: default;
+  background:
+    radial-gradient(ellipse 76% 64% at 50% 44%, rgba(34, 230, 255, .14), transparent 74%),
+    linear-gradient(162deg, #071119, #0b0714 78%);
+}
+/* 动画卡片不需要底部大遮罩，只留最底部一条给文字 */
+.video-card.is-anim .veil {
+  background: linear-gradient(180deg, transparent 54%, rgba(3, 6, 12, .84) 100%);
+}
+
+.pelican-stage {
+  position: absolute;
+  inset: 0;
+  padding: 5px 9px 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pelican-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* —— 线条与填充 —— */
+.pel-stroke  { fill: none; stroke: var(--cyan); stroke-width: 4.4; stroke-linecap: round; stroke-linejoin: round; }
+.pel-tire    { fill: none; stroke: var(--cyan); stroke-width: 5; opacity: .95; }
+.pel-spoke   { stroke: rgba(34, 230, 255, .45); stroke-width: 1.9; stroke-linecap: round; }
+.pel-hub     { fill: var(--cyan); }
+.pel-chain   { fill: none; stroke: rgba(34, 230, 255, .55); stroke-width: 2.4; }
+.pel-fill    { fill: rgba(34, 230, 255, .13); stroke: var(--cyan); stroke-width: 4.2; stroke-linejoin: round; }
+.pel-body    { fill: rgba(11, 32, 47, .96); stroke: var(--cyan); stroke-width: 4.4; stroke-linejoin: round; }
+.pel-neck    { fill: none; stroke: var(--cyan); stroke-width: 13; stroke-linecap: round; }
+.pel-neck-in { fill: none; stroke: rgba(11, 32, 47, .96); stroke-width: 6.5; stroke-linecap: round; }
+.pel-beak    { fill: #ffb648; stroke: var(--cyan); stroke-width: 3.4; stroke-linejoin: round; }
+.pel-pouch   { fill: rgba(255, 140, 60, .55); stroke: var(--cyan); stroke-width: 3.2; stroke-linejoin: round; }
+.pel-eye     { fill: #04101a; }
+.pel-glint   { fill: #d8fbff; }
+.pel-leg     { fill: none; stroke: var(--cyan); stroke-width: 5.4; stroke-linecap: round; stroke-linejoin: round; }
+.pel-leg-back { opacity: .42; }
+.pel-road    { stroke: rgba(34, 230, 255, .38); stroke-width: 2.6; stroke-dasharray: 20 16; }
+.pel-speed   { stroke: rgba(34, 230, 255, .5); stroke-width: 2.4; stroke-linecap: round; }
+
+/* —— 运动：车轮 / 曲柄旋转 —— */
+.pel-wheel-spin, .pel-crank-spin, .pel-rig, .pel-head-group,
+.pel-wing, .pel-leg-front, .pel-leg-back { transform-box: view-box; }
+
+.pel-wheel-spin { transform-origin: 104px 186px; animation: pelSpin 1.15s linear infinite; }
+.pel-wheel-spin.front { transform-origin: 296px 186px; }
+.pel-crank-spin { transform-origin: 182px 186px; animation: pelSpin 1.15s linear infinite; }
+@keyframes pelSpin { to { transform: rotate(360deg); } }
+
+/* —— 身体随路面轻微起伏 —— */
+.pel-rig { transform-origin: 150px 200px; animation: pelBob 1.15s ease-in-out infinite; }
+@keyframes pelBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.4px); } }
+
+/* —— 脖子点头 —— */
+.pel-head-group { transform-origin: 190px 62px; animation: pelNod 2.3s ease-in-out infinite; }
+@keyframes pelNod { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(3.6deg); } }
+
+/* —— 翅膀轻拍 —— */
+.pel-wing { transform-origin: 106px 78px; animation: pelFlap 1.75s ease-in-out infinite; }
+@keyframes pelFlap { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-9deg); } }
+
+/* —— 双腿交替蹬踏（与曲柄同周期） —— */
+.pel-leg-front { transform-origin: 126px 110px; animation: pelPedalA 1.15s linear infinite; }
+.pel-leg-back  { transform-origin: 122px 110px; animation: pelPedalB 1.15s linear infinite; }
+@keyframes pelPedalA { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(6deg); } }
+@keyframes pelPedalB { 0%, 100% { transform: rotate(6deg); }  50% { transform: rotate(-5deg); } }
+
+/* —— 地面流动 + 背景速度线 —— */
+.pel-road { animation: pelRoad .55s linear infinite; }
+@keyframes pelRoad { to { stroke-dashoffset: -36; } }
+
+.pel-speed { animation: pelDash 1.15s linear infinite; }
+@keyframes pelDash {
+  0%   { transform: translateX(0);      opacity: 0; }
+  15%  { opacity: .85; }
+  100% { transform: translateX(-120px); opacity: 0; }
+}
+
 /* ═══════ 平台 / 联系链接 ═══════ */
 .link-grid {
   display: grid;
@@ -932,6 +1016,114 @@ html[data-theme="light"] .link-card {
   -->
   <section class="video-wall">
 
+    <!-- ⭐ 鹈鹕骑自行车 · 原创 SVG 动画（向 AI 圈著名基准测试致敬，纯代码、无版权问题） -->
+    <div class="video-card is-anim reveal" title="鹈鹕骑自行车 · 原创 SVG 动画">
+      <div class="pelican-stage">
+        <svg class="pelican-svg" viewBox="0 0 420 260" role="img"
+             aria-label="一只鹈鹕骑着自行车向前行驶的循环动画">
+          <!-- 背景速度线 -->
+          <g class="pel-speed">
+            <line x1="336" y1="58"  x2="378" y2="58"/>
+            <line x1="348" y1="88"  x2="382" y2="88"/>
+            <line x1="332" y1="118" x2="370" y2="118"/>
+            <line x1="352" y1="148" x2="386" y2="148"/>
+          </g>
+
+          <!-- 地面 -->
+          <line class="pel-road" x1="6" y1="232" x2="414" y2="232"/>
+
+          <!-- ===== 自行车 ===== -->
+          <!-- 后轮 -->
+          <circle class="pel-tire" cx="104" cy="186" r="42"/>
+          <g class="pel-wheel-spin">
+            <line class="pel-spoke" x1="104" y1="146" x2="104" y2="226"/>
+            <line class="pel-spoke" x1="64"  y1="186" x2="144" y2="186"/>
+            <line class="pel-spoke" x1="76"  y1="158" x2="132" y2="214"/>
+            <line class="pel-spoke" x1="132" y1="158" x2="76"  y2="214"/>
+          </g>
+          <circle class="pel-hub" cx="104" cy="186" r="4.6"/>
+
+          <!-- 前轮 -->
+          <circle class="pel-tire" cx="296" cy="186" r="42"/>
+          <g class="pel-wheel-spin front">
+            <line class="pel-spoke" x1="296" y1="146" x2="296" y2="226"/>
+            <line class="pel-spoke" x1="256" y1="186" x2="336" y2="186"/>
+            <line class="pel-spoke" x1="268" y1="158" x2="324" y2="214"/>
+            <line class="pel-spoke" x1="324" y1="158" x2="268" y2="214"/>
+          </g>
+          <circle class="pel-hub" cx="296" cy="186" r="4.6"/>
+
+          <!-- 车架 -->
+          <g class="pel-stroke">
+            <path d="M104 186 L182 186"/>
+            <path d="M104 186 L148 118"/>
+            <path d="M148 118 L182 186"/>
+            <path d="M148 118 L266 110"/>
+            <path d="M182 186 L266 110"/>
+            <path d="M266 110 L296 186"/>
+            <path d="M266 110 L268 94"/>
+          </g>
+
+          <!-- 齿盘 -->
+          <circle class="pel-chain" cx="182" cy="186" r="15"/>
+
+          <!-- 座垫 -->
+          <ellipse class="pel-fill" cx="142" cy="112" rx="19" ry="6.4" transform="rotate(-8 142 112)"/>
+
+          <!-- 车把 -->
+          <g class="pel-stroke">
+            <path d="M268 94 L252 96"/>
+            <path d="M268 94 L286 96"/>
+          </g>
+          <circle class="pel-hub" cx="252" cy="96" r="4"/>
+          <circle class="pel-hub" cx="286" cy="96" r="4"/>
+
+          <!-- 曲柄 + 踏板（旋转） -->
+          <g class="pel-crank-spin">
+            <line class="pel-stroke" x1="182" y1="164" x2="182" y2="208"/>
+            <rect class="pel-hub" x="172" y="160" width="20" height="7" rx="3.2"/>
+            <rect class="pel-hub" x="172" y="204" width="20" height="7" rx="3.2"/>
+          </g>
+
+          <!-- ===== 鹈鹕 ===== -->
+          <g class="pel-rig">
+            <!-- 远侧腿 -->
+            <path class="pel-leg pel-leg-back" d="M122 110 L146 148 L180 200"/>
+
+            <!-- 身体 -->
+            <ellipse class="pel-body" cx="118" cy="86" rx="42" ry="29" transform="rotate(-14 118 86)"/>
+
+            <!-- 脖子 / 头 / 喙（整体点头） -->
+            <g class="pel-head-group">
+              <path class="pel-neck" d="M140 78 Q166 44 202 40"/>
+              <path class="pel-neck-in" d="M140 78 Q166 44 202 40"/>
+
+              <ellipse class="pel-body" cx="208" cy="38" rx="16" ry="13.4"/>
+
+              <!-- 喉囊 -->
+              <path class="pel-pouch" d="M218 43 Q252 48 294 42 Q280 74 244 72 Q220 64 218 43 Z"/>
+              <!-- 上喙 -->
+              <path class="pel-beak" d="M217 31 Q258 33 296 42 Q258 41 217 43 Z"/>
+
+              <!-- 眼睛 -->
+              <circle class="pel-eye" cx="212" cy="32" r="3.6"/>
+              <circle class="pel-glint" cx="213.4" cy="30.6" r="1.3"/>
+            </g>
+
+            <!-- 翅膀 -->
+            <path class="pel-wing pel-fill" d="M104 70 Q136 60 152 84 Q134 108 100 102 Q90 86 104 70 Z"/>
+
+            <!-- 近侧腿 -->
+            <path class="pel-leg pel-leg-front" d="M126 108 L152 144 L180 166"/>
+          </g>
+        </svg>
+      </div>
+
+      <span class="veil" aria-hidden="true"></span>
+      <span class="vc-badge" aria-hidden="true"><span class="pdot"></span>SVG</span>
+      <span class="vc-label"><b>鹈鹕骑自行车</b><small>AI Benchmark · 原创动画</small></span>
+    </div>
+
     <div class="video-card reveal" title="点击开启 / 关闭声音">
       <video muted loop playsinline preload="none" data-src="./videos/car-highway-sunset.mp4"></video>
       <span class="veil" aria-hidden="true"></span>
@@ -1058,7 +1250,7 @@ html[data-theme="light"] .link-card {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="9"/><path d="M12 8.2v.01M11 12h1v4h1"/>
     </svg>
-    静音自动循环播放 · 点击任意视频可开启声音 · 素材：Mixkit 免费授权
+    静音自动循环播放 · 点击任意视频可开启声音 · 视频素材：Mixkit 免费授权 · 鹈鹕动画为原创 SVG 纯代码实现
   </p>
 
   <!-- ════ 三条信条 ════ -->
@@ -1328,15 +1520,26 @@ document.getElementById('year').textContent = new Date().getFullYear();
     items.forEach(function (n) { n.classList.add('in'); });
     return;
   }
+  var triggered = false;
+
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e, i) {
       if (e.isIntersecting) {
+        triggered = true;
         setTimeout(function () { e.target.classList.add('in'); }, i * 80);
         io.unobserve(e.target);
       }
     });
   }, { threshold: .14, rootMargin: '0px 0px -40px 0px' });
   items.forEach(function (n) { io.observe(n); });
+
+  // 兜底：若 3 秒内 IntersectionObserver 一次都没触发（个别环境会这样），
+  // 直接显示全部内容，避免页面看起来一片空白。
+  setTimeout(function () {
+    if (!triggered) {
+      items.forEach(function (n) { n.classList.add('in'); });
+    }
+  }, 3000);
 })();
 
 /* ══════════════════════════════════════════════════════
