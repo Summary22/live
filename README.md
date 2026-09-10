@@ -123,6 +123,82 @@ python3 -m http.server 8000
 
 ---
 
+## 🆕 内容模块（Hero 视频 / 数据条 / 故事 / 商务合作）
+
+### 🎥 Hero 视频背景
+
+首屏是一段静音循环的背景视频，已用 ffmpeg 深度压缩：
+
+| 文件 | 规格 | 大小 |
+|------|------|------|
+| `videos/hero-bg.mp4` | 1280×720，无音轨，H.264 | 844 KB |
+| `videos/hero-bg-mobile.mp4` | 960×540，小屏自动切换 | 410 KB |
+| `videos/hero-poster.jpg` | 视频加载前显示的首帧 | 56 KB |
+
+原始 720p 素材 **4.8MB → 压缩后 844KB（省 82%）**。压缩命令留档：
+
+```bash
+# 桌面版
+ffmpeg -i 原视频.mp4 -an -c:v libx264 -crf 29 -preset slow \
+  -vf "scale=1280:-2" -movflags +faststart -pix_fmt yuv420p videos/hero-bg.mp4
+
+# 移动版
+ffmpeg -i 原视频.mp4 -an -c:v libx264 -crf 31 -preset slow \
+  -vf "scale=960:-2" -movflags +faststart -pix_fmt yuv420p videos/hero-bg-mobile.mp4
+
+# 海报图（首帧）
+ffmpeg -i 原视频.mp4 -vf "select=eq(n\,0)" -frames:v 1 -q:v 4 videos/hero-poster.jpg
+```
+
+关键参数：`-an` 去掉音轨、`+faststart` 支持边下边播、`crf 29` 用于背景时肉眼无损。
+
+### 📊 数据条 ⚠️ 上线前必须改
+
+> ⚠️ **这 4 个数字目前是占位值，必须换成你的真实数据** —— 尤其「合作商家」涉及商业诚信。
+
+| 项目 | 占位值 |
+|------|--------|
+| 直播场次 | `300+` |
+| 累计时长 | `800+` 小时 |
+| 全网粉丝 | `5` 万 |
+| 合作商家 | `30+` |
+
+改法：搜索 `data-count`，**只改数字**：
+
+```html
+<span class="stat-num" data-count="300">0</span><span class="stat-suffix">+</span>
+```
+
+- `data-count` = 滚动目标值
+- `stat-suffix` = 后缀（`+` / `万` / `%`…）
+- 数字在进入视口时从 0 滚上去，改了会自动生效
+
+### 🔔 开播提醒
+
+因为你**开播时间不固定**，这里没做倒计时，而是一条引导关注的横幅。文案在 `<h3>` 里，4 个平台链接在 `.notify-links`。
+
+### 📖 个人故事（About）
+
+我按你的定位起草了一版，**刻意没有编造任何具体经历**（学历、工作、入行年份等），只表达方向和标准。
+
+想加真实经历就在 `.about-body` 里加 `<p>` 段落；三条原则在 `.about-rules`。
+
+### 🤝 商务合作
+
+4 类形式：探店体验 / 新车试驾 / 专场直播 / 短视频内容。按你的选择**不公开报价**，只留邮箱入口。
+
+「合作原则」三条按行业惯例写的，可自行增删：
+
+```html
+<ul>
+  <li>产品需先体验，确认认可后才接</li>
+  <li>合作内容一律明确标注为合作</li>
+  <li>不接三无产品、虚假宣传与数据造假</li>
+</ul>
+```
+
+---
+
 ## ✏️ 需要你补充的信息
 
 ### 1️⃣ 直播间链接（最重要）
