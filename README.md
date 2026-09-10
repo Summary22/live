@@ -60,6 +60,69 @@ python3 -m http.server 8000
 
 ---
 
+## 🎬 视频墙（静音自动循环播放）
+
+主页含 **8 条精选短视频**，进入视口自动播放、循环、默认静音，点击可开启声音。
+
+### 视频清单
+
+| 文件 | 标题 | 分类 | 大小 |
+|------|------|------|------|
+| `videos/car-highway-sunset.mp4` | 日落公路 | 汽车 | 948K |
+| `videos/car-curvy-dawn.mp4` | 晨光弯道 | 汽车 | 555K |
+| `videos/car-dashboard.mp4` | 入座瞬间 | 汽车 | 984K |
+| `videos/car-closeup.mp4` | 线条特写 | 汽车 | 705K |
+| `videos/city-night-aerial.mp4` | 城市夜航 | 本地生活 | 1.5M |
+| `videos/city-tokyo-walk.mp4` | 街头漫步 | 本地生活 | 1.4M |
+| `videos/city-rainy-night.mp4` | 雨夜霓虹 | 本地生活 | 1.4M |
+| `videos/city-aerial-side.mp4` | 城市轮廓 | 本地生活 | 3.1M |
+
+合计约 13MB，全部为 **16:9 横屏、7–43 秒**，适合循环播放。
+
+### ✅ 授权说明
+
+全部素材来自 **[Mixkit](https://mixkit.co/)**，采用 **Mixkit Free License**：
+
+- ✅ 免费用于商业与非商业项目
+- ✅ **无需署名**
+- ❌ 不可把素材本身当作素材库二次分发
+
+### ⚠️ 自动播放的技术限制（必读）
+
+**浏览器禁止带声音的视频自动播放** —— 这是所有现代浏览器的硬性规则，无法绕过。
+所以视频默认 `muted`（静音）。页面已做这些处理：
+
+| 机制 | 作用 |
+|------|------|
+| `muted + loop + playsinline` | 满足自动播放条件，iOS 上也不会强制全屏 |
+| **懒加载播放** | 滚动到视口才加载并播放，离开视口立即暂停 —— 省流量、省电 |
+| 切换标签页暂停 | `visibilitychange` 时全部暂停，不占用资源 |
+| 点击开声音 | 点任意视频开启声音，**同时只允许一个视频有声**，避免嘈杂 |
+| 自动播放被拦截兜底 | `play().catch()` 静默处理，不会报错 |
+
+> 💡 如果你希望**完全不要声音功能**，把 `index.html` 里 8 个 `title="点击开启 / 关闭声音"` 对应的点击逻辑删掉即可。
+
+### 换成你自己的视频
+
+1. 把你的视频（建议 mp4 / H.264 编码、静音、5~30 秒、16:9）放进 `videos/` 目录
+2. 在 `index.html` 里搜索 `data-src="./videos/`，把路径换成你的文件名
+3. 同时改一下 `<b>标题</b>` 和 `<small>分类</small>`
+
+```html
+<!-- 改之前 -->
+<video muted loop playsinline preload="none" data-src="./videos/car-dashboard.mp4"></video>
+<span class="vc-label"><b>入座瞬间</b><small>Automotive</small></span>
+
+<!-- 改之后 -->
+<video muted loop playsinline preload="none" data-src="./videos/我的直播切片.mp4"></video>
+<span class="vc-label"><b>上周探店实拍</b><small>Local Life</small></span>
+```
+
+> 📌 用你自己的直播切片是最合适的选择 —— 既有版权保障，又真正展示你的内容。
+> 注意保持文件名不含空格与中文标点更稳妥（中文文件名可以，但建议用短横线英文名）。
+
+---
+
 ## ✏️ 需要你补充的信息
 
 ### 1️⃣ 直播间链接（最重要）
