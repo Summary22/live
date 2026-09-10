@@ -571,6 +571,137 @@ html[data-theme="light"] .hero h1 {
   background: rgba(120, 200, 255, .04);
 }
 
+/* ═══════ 视频墙（静音自动播放） ═══════ */
+.video-wall {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+  gap: 14px;
+}
+
+.video-card {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--stroke);
+  background: #05080e;
+  cursor: pointer;
+  transition: transform .4s var(--ease), border-color .3s ease, box-shadow .3s ease;
+}
+.video-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--stroke-hi);
+  box-shadow: 0 22px 46px -22px rgba(34, 230, 255, .85);
+}
+
+.video-card video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .7s var(--ease);
+}
+.video-card:hover video { transform: scale(1.07); }
+
+/* 底部渐变遮罩，保证文字可读 */
+.video-card .veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 34%, rgba(3, 6, 12, .88) 100%);
+}
+
+.video-card .vc-label {
+  position: absolute;
+  left: 13px; right: 13px; bottom: 11px;
+  pointer-events: none;
+}
+.video-card .vc-label b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .8);
+}
+.video-card .vc-label small {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(185, 212, 240, .78);
+}
+
+/* 左上角自动播放角标 */
+.video-card .vc-badge {
+  position: absolute;
+  top: 10px; left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  color: #eafcff;
+  background: rgba(3, 10, 18, .6);
+  border: 1px solid rgba(34, 230, 255, .3);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+.video-card .vc-badge .pdot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 7px var(--cyan);
+  animation: blink 1.8s ease-in-out infinite;
+}
+
+/* 右上角声音开关 */
+.video-card .vc-sound {
+  position: absolute;
+  top: 9px; right: 9px;
+  width: 26px; height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: rgba(215, 238, 255, .92);
+  background: rgba(3, 10, 18, .6);
+  border: 1px solid var(--stroke);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity .3s ease, color .25s ease, border-color .25s ease;
+  pointer-events: none;
+}
+.video-card .vc-sound svg { width: 13px; height: 13px; }
+.video-card:hover .vc-sound { opacity: 1; }
+.video-card.is-unmuted .vc-sound {
+  opacity: 1;
+  color: var(--cyan);
+  border-color: var(--stroke-hi);
+  box-shadow: 0 0 14px -3px rgba(34, 230, 255, .9);
+}
+/* 静音 / 有声 两种图标切换 */
+.video-card .ico-on  { display: none; }
+.video-card.is-unmuted .ico-off { display: none; }
+.video-card.is-unmuted .ico-on  { display: block; }
+
+/* 视频区提示条 */
+.wall-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .04em;
+  color: var(--text-faint);
+}
+.wall-hint svg { width: 13px; height: 13px; flex-shrink: 0; }
+
 /* ═══════ 平台 / 联系链接 ═══════ */
 .link-grid {
   display: grid;
@@ -856,11 +987,153 @@ html[data-theme="light"] .link-card {
     </article>
   </section>
 
+  <!-- ════ 精选视频墙（静音自动循环播放） ════ -->
+  <div class="sec-head reveal" id="showreel">
+    <h2>Showreel</h2>
+    <span class="rule"></span>
+    <span class="idx">02</span>
+  </div>
+
+  <!--
+    💡 想换成自己的视频：把 data-src 改成你自己的文件路径或视频地址即可
+       （建议静音、时长 5~30 秒、横屏 16:9，循环播放观感最好）
+  -->
+  <section class="video-wall">
+
+    <div class="video-card reveal" title="点击开启 / 关闭声音">
+      <video muted loop playsinline preload="none" data-src="./videos/car-highway-sunset.mp4"></video>
+      <span class="veil" aria-hidden="true"></span>
+      <span class="vc-badge" aria-hidden="true"><span class="pdot"></span>AUTO</span>
+      <span class="vc-sound" aria-hidden="true">
+        <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/>
+        </svg>
+        <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/>
+        </svg>
+      </span>
+      <span class="vc-label"><b>日落公路</b><small>Automotive</small></span>
+    </div>
+
+    <div class="video-card reveal" title="点击开启 / 关闭声音">
+      <video muted loop playsinline preload="none" data-src="./videos/car-curvy-dawn.mp4"></video>
+      <span class="veil" aria-hidden="true"></span>
+      <span class="vc-badge" aria-hidden="true"><span class="pdot"></span>AUTO</span>
+      <span class="vc-sound" aria-hidden="true">
+        <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/>
+        </svg>
+        <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/>
+        </svg>
+      </span>
+      <span class="vc-label"><b>晨光弯道</b><small>Automotive</small></span>
+    </div>
+
+    <div class="video-card reveal" title="点击开启 / 关闭声音">
+      <video muted loop playsinline preload="none" data-src="./videos/car-dashboard.mp4"></video>
+      <span class="veil" aria-hidden="true"></span>
+      <span class="vc-badge" aria-hidden="true"><span class="pdot"></span>AUTO</span>
+      <span class="vc-sound" aria-hidden="true">
+        <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/>
+        </svg>
+        <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/>
+        </svg>
+      </span>
+      <span class="vc-label"><b>入座瞬间</b><small>Automotive</small></span>
+    </div>
+
+    <div class="video-card reveal" title="点击开启 / 关闭声音">
+      <video muted loop playsinline preload="none" data-src="./videos/car-closeup.mp4"></video>
+      <span class="veil" aria-hidden="true"></span>
+      <span class="vc-badge" aria-hidden="true"><span class="pdot"></span>AUTO</span>
+      <span class="vc-sound" aria-hidden="true">
+        <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/>
+        </svg>
+        <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/>
+        </svg>
+      </span>
+      <span class="vc-label"><b>线条特写</b><small>Automotive</small></span>
+    </div>
+
+    <div class="video-card reveal" title="点击开启 / 关闭声音">
+      <video muted loop playsinline preload="none" data-src="./videos/city-night-aerial.mp4"></video>
+      <span class="veil" aria-hidden="true"></span>
+      <span class="vc-badge" aria-hidden="true"><span class="pdot"></span>AUTO</span>
+      <span class="vc-sound" aria-hidden="true">
+        <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/>
+        </svg>
+        <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/>
+        </svg>
+      </span>
+      <span class="vc-label"><b>城市夜航</b><small>Local Life</small></span>
+    </div>
+
+    <div class="video-card reveal" title="点击开启 / 关闭声音">
+      <video muted loop playsinline preload="none" data-src="./videos/city-tokyo-walk.mp4"></video>
+      <span class="veil" aria-hidden="true"></span>
+      <span class="vc-badge" aria-hidden="true"><span class="pdot"></span>AUTO</span>
+      <span class="vc-sound" aria-hidden="true">
+        <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/>
+        </svg>
+        <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/>
+        </svg>
+      </span>
+      <span class="vc-label"><b>街头漫步</b><small>Local Life</small></span>
+    </div>
+
+    <div class="video-card reveal" title="点击开启 / 关闭声音">
+      <video muted loop playsinline preload="none" data-src="./videos/city-rainy-night.mp4"></video>
+      <span class="veil" aria-hidden="true"></span>
+      <span class="vc-badge" aria-hidden="true"><span class="pdot"></span>AUTO</span>
+      <span class="vc-sound" aria-hidden="true">
+        <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/>
+        </svg>
+        <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/>
+        </svg>
+      </span>
+      <span class="vc-label"><b>雨夜霓虹</b><small>Local Life</small></span>
+    </div>
+
+    <div class="video-card reveal" title="点击开启 / 关闭声音">
+      <video muted loop playsinline preload="none" data-src="./videos/city-aerial-side.mp4"></video>
+      <span class="veil" aria-hidden="true"></span>
+      <span class="vc-badge" aria-hidden="true"><span class="pdot"></span>AUTO</span>
+      <span class="vc-sound" aria-hidden="true">
+        <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/>
+        </svg>
+        <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6.5 9H3v6h3.5L11 19z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/>
+        </svg>
+      </span>
+      <span class="vc-label"><b>城市轮廓</b><small>Local Life</small></span>
+    </div>
+
+  </section>
+
+  <p class="wall-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><path d="M12 8.2v.01M11 12h1v4h1"/>
+    </svg>
+    静音自动循环播放 · 点击任意视频可开启声音 · 素材：Mixkit 免费授权
+  </p>
+
   <!-- ════ 平台与联系方式 ════ -->
   <div class="sec-head reveal" id="links">
     <h2>Find Me</h2>
     <span class="rule"></span>
-    <span class="idx">02</span>
+    <span class="idx">03</span>
   </div>
 
   <!-- ⚠️ 把每个 href="#" 换成你的真实主页/直播间地址即可 -->
@@ -1189,6 +1462,79 @@ document.getElementById('year').textContent = new Date().getFullYear();
         (-py * 5).toFixed(2) + 'deg) translateY(-4px)';
     });
     card.addEventListener('mouseleave', function () { card.style.transform = ''; });
+  });
+})();
+
+/* ══════════════════════════════════════════════════════
+   9. 视频墙：懒加载 + 静音自动循环 + 点击开关声音
+   ══════════════════════════════════════════════════════ */
+(function () {
+  var cards = document.querySelectorAll('.video-card');
+  if (!cards.length) return;
+
+  var vids = [];
+
+  cards.forEach(function (card) {
+    var v = card.querySelector('video');
+    if (!v) return;
+
+    v.muted = true;            // 必须静音，浏览器才允许自动播放
+    vids.push(v);
+
+    // 点击卡片：切换声音（同时只允许一个视频出声，避免嘈杂）
+    card.addEventListener('click', function () {
+      var turnOn = v.muted;
+
+      vids.forEach(function (o) {
+        o.muted = true;
+        var c = o.closest('.video-card');
+        if (c) c.classList.remove('is-unmuted');
+      });
+
+      if (turnOn) {
+        v.muted = false;
+        card.classList.add('is-unmuted');
+        var p = v.play();
+        if (p && p.catch) p.catch(function () {});
+      }
+    });
+  });
+
+  function load(v) {
+    if (!v.src && v.dataset.src) v.src = v.dataset.src;
+  }
+
+  function safePlay(v) {
+    var p = v.play();
+    if (p && p.catch) p.catch(function () {});   // 忽略自动播放被拦截
+  }
+
+  // 不支持 IntersectionObserver 时，直接全部加载播放
+  if (!('IntersectionObserver' in window)) {
+    vids.forEach(function (v) { load(v); safePlay(v); });
+    return;
+  }
+
+  // 进入视口才加载并播放，离开视口立即暂停（省流量、省电）
+  var vio = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      var v = e.target;
+      var card = v.closest('.video-card');
+      if (e.isIntersecting) {
+        load(v);
+        v.muted = !(card && card.classList.contains('is-unmuted'));
+        safePlay(v);
+      } else {
+        v.pause();
+      }
+    });
+  }, { threshold: 0.2, rootMargin: '160px 0px' });
+
+  vids.forEach(function (v) { vio.observe(v); });
+
+  // 切到后台标签页时全部暂停
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) vids.forEach(function (v) { v.pause(); });
   });
 })();
 </script>
