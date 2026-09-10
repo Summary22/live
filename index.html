@@ -317,6 +317,20 @@ html[data-theme="light"] .hero-veil {
   opacity: .75;
 }
 
+.stat-tag {
+  display: block;
+  font-size: clamp(16px, 2.5vw, 19.5px);
+  font-weight: 700;
+  line-height: 1.32;
+  letter-spacing: .01em;
+  color: var(--text);
+  text-shadow: 0 0 20px rgba(34, 230, 255, .5);
+}
+html[data-theme="light"] .stat-tag {
+  text-shadow: 0 0 18px rgba(14, 165, 202, .35);
+}
+
+/* 如果以后想换回数字版，用这两条样式（配合 data-count 脚本） */
 .stat-num {
   display: inline-block;
   font-family: var(--mono);
@@ -336,7 +350,6 @@ html[data-theme="light"] .stat-num {
           background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
 .stat-suffix {
   font-family: var(--mono);
   font-size: 15px;
@@ -349,7 +362,7 @@ html[data-theme="light"] .stat-num {
   display: block;
   margin-top: 8px;
   font-size: 12px;
-  letter-spacing: .06em;
+  letter-spacing: .04em;
   color: var(--text-faint);
 }
 
@@ -1274,27 +1287,28 @@ html[data-theme="light"] .link-card {
     </div>
   </section>
 
-  <!-- ════ 数据条 ════
-       ⚠️⚠️ 重要：下面 4 个数字目前是【占位值】，上线前必须改成你的真实数据！
-       修改方式：改 data-count 属性里的数字即可（不要动其他部分）
-       数字会从 0 滚动到目标值，进入视口时触发
+  <!-- ════ 定位标签条 ════
+       💡 这里原本是「数字成绩条」，因为不放未经核实的数据，改成定位标签。
+       以后有真实数据想换回数字版，把卡片内容换成：
+         <span class="stat-num" data-count="你的数字">0</span><span class="stat-suffix">+</span>
+       滚动脚本仍然保留，会自动生效。
   -->
   <section class="stats reveal">
     <div class="stat">
-      <span class="stat-num" data-count="300">0</span><span class="stat-suffix">+</span>
-      <span class="stat-label">直播场次</span>
+      <span class="stat-tag">本地生活</span>
+      <span class="stat-label">探店 · 市集 · 城市角落</span>
     </div>
     <div class="stat">
-      <span class="stat-num" data-count="800">0</span><span class="stat-suffix">+</span>
-      <span class="stat-label">累计时长 / 小时</span>
+      <span class="stat-tag">汽车</span>
+      <span class="stat-label">新车实拍 · 用车体验</span>
     </div>
     <div class="stat">
-      <span class="stat-num" data-count="5">0</span><span class="stat-suffix">万</span>
-      <span class="stat-label">全网粉丝</span>
+      <span class="stat-tag">无剧本</span>
+      <span class="stat-label">现场实拍 · 不彩排</span>
     </div>
     <div class="stat">
-      <span class="stat-num" data-count="30">0</span><span class="stat-suffix">+</span>
-      <span class="stat-label">合作商家</span>
+      <span class="stat-tag">先体验</span>
+      <span class="stat-label">认可了才会推荐</span>
     </div>
   </section>
 
