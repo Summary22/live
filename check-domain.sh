@@ -84,27 +84,56 @@ section "4. GitHub Pages 重定向状态"
 LOC=$(curl -sI --max-time 15 "https://$GH_USER.github.io/" 2>/dev/null | grep -i '^location:' | tr -d '\r' | cut -d' ' -f2-)
 CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "https://$GH_USER.github.io/" 2>/dev/null)
 if [ "$CODE" = "200" ]; then
-  ok "$GH_USER.github.io 直接返回 200（未重定向）"
+  ok "$GH_USER.github.io 直接返回 200（未绑定自定义域名）"
 elif echo "$LOC" | grep -q "$DOMAIN"; then
-  warn "$GH_USER.github.io 仍 301 重定向到 $DOMAIN"
-  info "这是博客仓库设置了 Custom domain 所致"
-  info "DNS 配好后会自动恢复正常；若不想用该域名，去 Pages 设置里清空 Custom domain"
+  ok "$GH_USER.github.io → 301 → $DOMAIN"
+  info "自定义域名已绑定。这是 GitHub Pages 的预期行为，不是故障"
+  info "跳转目标有效，两个地址都能正常打开"
 else
   info "HTTP $CODE ${LOC:+→ $LOC}"
 fi
 
-# ---------- 5. HTTPS 证书 ----------
+# ---------- 5. HTTPS 证书 + Enforce HTTPS ----------
 section "5. HTTPS 证书"
 CERT=$(echo | openssl s_client -servername "$DOMAIN" -connect "$DOMAIN:443" 2>/dev/null | openssl x509 -noout -subject -issuer -dates 2>/dev/null)
 if [ -n "$CERT" ]; then
   echo "$CERT" | sed 's/^/     /'
-  echo "$CERT" | grep -qi "github" && ok "证书由 GitHub 签发" || warn "证书签发方不是 GitHub（可能未启用 Enforce HTTPS）"
+  if echo "$CERT" | grep -q "$DOMAIN"; then
+    ok "证书已签发且匹配域名"
+    info "GitHub Pages 统一使用 Let's Encrypt 免费证书，签发方是 Let's Encrypt 完全正常"
+  else
+    warn "证书域名与 $DOMAIN 不匹配"
+  fi
 else
   warn "无法获取证书（DNS 未生效或 HTTPS 未启用）"
 fi
 
-# ---------- 6. 本地文件 ----------
-section "6. 本地仓库状态"
+echo ""
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 12 "http://$DOMAIN/" 2>/dev/null)
+if [ "$HTTP_CODE" = "301" ] || [ "$HTTP_CODE" = "302" ]; then
+  ok "Enforce HTTPS 已启用（http 自动跳转 https）"
+elif [ "$HTTP_CODE" = "200" ]; then
+  warn "Enforce HTTPS 未启用 —— http://$DOMAIN 仍可直接访问，存在安全风险"
+  info "去这里勾选 Enforce HTTPS："
+  info "https://github.com/$GH_USER/$GH_USER.github.io/settings/pages"
+else
+  info "http 访问返回 HTTP $HTTP_CODE"
+fi
+
+# ---------- 6. 站点内容验证 ----------
+section "6. 站点内容验证"
+BLOG_TITLE=$(curl -s --max-time 15 "https://$DOMAIN/" 2>/dev/null | grep -oE "<title>[^<]*</title>" | head -1 | sed 's/<[^>]*>//g')
+[ -n "$BLOG_TITLE" ] && ok "根域名（博客）标题: $BLOG_TITLE" || warn "根域名无标题或无法访问"
+
+LIVE_HTML=$(curl -s --max-time 15 "https://$DOMAIN/$LIVE_PATH/" 2>/dev/null)
+LIVE_TITLE=$(echo "$LIVE_HTML" | grep -oE "<title>[^<]*</title>" | head -1 | sed 's/<[^>]*>//g')
+[ -n "$LIVE_TITLE" ] && ok "子路径（主页）标题: $LIVE_TITLE" || warn "主页无标题或无法访问"
+for k in "UnAmico0777" "pelican-svg" "video-card"; do
+  echo "$LIVE_HTML" | grep -q "$k" && info "  ✓ 含 $k" || warn "  缺少 $k"
+done
+
+# ---------- 7. 本地仓库状态 ----------
+section "7. 本地仓库状态"
 cd "$(dirname "$0")" 2>/dev/null || exit 0
 if git rev-parse --git-dir >/dev/null 2>&1; then
   DIRTY=$(git status --porcelain | wc -l | tr -d ' ')
